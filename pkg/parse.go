@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"bufio"
+	"log/slog"
 	"os"
 	"path"
 	"runtime"
@@ -19,7 +20,11 @@ func Parse(testing bool, f func([]string)) {
 	}
 
 	handle, err := os.Open(filename)
-	Check(err)
+
+	if err != nil {
+		slog.Error("failed to read file", "err", err)
+		os.Exit(1)
+	}
 
 	reader := bufio.NewReader(handle)
 
