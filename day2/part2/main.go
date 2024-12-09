@@ -32,7 +32,6 @@ func run(testing bool) string {
 
 	pkg.Parse(testing, func(rows []string) {
 		for _, row := range rows {
-
 			matches := strings.Split(row, " ")
 			vals := []int{}
 
