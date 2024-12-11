@@ -2,6 +2,7 @@ package main
 
 import (
 	"log/slog"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -27,42 +28,35 @@ func main() {
 func run(testing bool) string {
 	var (
 		blinks = 25
-		stones []string
+		stones []int
 	)
 
 	pkg.Parse(testing, func(rows []string) {
 		for _, row := range rows {
-			stones = strings.Split(row, " ")
+			for _, number := range strings.Split(row, " ") {
+				val, _ := strconv.Atoi(number)
+				stones = append(stones, val)
+			}
 		}
 	})
 
 	slog.Debug("init", "stones", stones)
 
 	for i := 0; i < blinks; i++ {
-		next := []string{}
+		next := []int{}
 		slog.Debug("", "blink", i+1)
 
 		for _, stone := range stones {
 			switch {
-			case stone == "0":
-				next = append(next, "1")
+			case stone == 0:
+				next = append(next, 1)
 
-			case len(stone)%2 != 0:
-				val, _ := strconv.Atoi(stone)
-				next = append(next, strconv.Itoa(val*2024))
-
-			case len(stone)%2 == 0:
-				middle := len(stone) / 2
-				right := strings.TrimLeft(stone[middle:], "0")
-
-				if len(right) == 0 {
-					right = "0"
-				}
-
-				next = append(next, stone[:middle], right)
+			case len(strconv.Itoa(stone))%2 == 0:
+				left, right := splitNumber(stone)
+				next = append(next, left, right)
 
 			default:
-				next = append(next, stone)
+				next = append(next, stone*2024)
 			}
 		}
 
@@ -70,4 +64,19 @@ func run(testing bool) string {
 	}
 
 	return strconv.Itoa(len(stones))
+}
+
+func splitNumber(stone int) (int, int) {
+	splitPoint := countDigits(stone) / 2
+	splitDivisor := int(math.Pow10(splitPoint))
+
+	return stone / splitDivisor, stone % splitDivisor
+}
+
+func countDigits(num int) int {
+	if num == 0 {
+		return 1
+	}
+
+	return int(math.Floor(math.Log10(float64(num)))) + 1
 }
