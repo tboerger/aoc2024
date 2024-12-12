@@ -41,8 +41,6 @@ func run(testing bool) string {
 		}
 	})
 
-	fmt.Println(len(diskmap))
-
 	blocks = parseDiskmap(diskmap)
 	slog.Debug("parsed", "count", len(blocks), "val", blocks)
 
@@ -57,10 +55,8 @@ func parseDiskmap(diskmap []int) []int {
 
 	for i, val := range diskmap {
 		if i%2 == 0 {
-			slog.Debug("data", "num", val)
 			result = append(result, slices.Repeat([]int{i / 2}, val)...)
 		} else {
-			slog.Debug("free", "num", val)
 			result = append(result, slices.Repeat([]int{-1}, val)...)
 		}
 	}
@@ -80,14 +76,14 @@ func compactDisk(blocks []int) []int {
 			break
 		}
 
-		slog.Debug("a", "blocks", blocks, "free", free, "i", i)
+		// slog.Debug("a", "blocks", blocks, "free", free, "i", i)
 
 		if blocks[i] >= 0 {
 			blocks[free], blocks[i] = blocks[i], blocks[free]
 			free = slices.Index(blocks, -1)
 		}
 
-		slog.Debug("a", "blocks", blocks, "free", free, "i", i)
+		// slog.Debug("a", "blocks", blocks, "free", free, "i", i)
 	}
 
 	return blocks
@@ -99,6 +95,7 @@ func calculateChecksum(blocks []int) int {
 	for pos, val := range blocks {
 		if val != -1 {
 			result += pos * val
+			fmt.Printf("%d * %d = %d --- %d\n", pos, val, pos*val, result)
 		}
 	}
 
