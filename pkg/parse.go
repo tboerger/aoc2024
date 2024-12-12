@@ -26,7 +26,7 @@ func Parse(testing bool, f func([]string)) {
 		os.Exit(1)
 	}
 
-	reader := bufio.NewReader(handle)
+	reader := bufio.NewReaderSize(handle, 10*4096)
 
 	for {
 		row, prefix, err := reader.ReadLine()
